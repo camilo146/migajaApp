@@ -63,8 +63,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Allow specific origins instead of * when credentials are allowed
-        configuration
-                .setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080", "http://localhost"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200",
+                "http://localhost:8080",
+                "http://localhost",
+                "https://migajerosbucaramanga.fun",
+                "http://migajerosbucaramanga.fun",
+                "https://www.migajerosbucaramanga.fun"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept",
                 "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
