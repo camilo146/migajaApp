@@ -1,0 +1,122 @@
+<div class="auth-container">
+  <div class="auth-card card">
+    <div class="auth-header">
+      <h1>Crear Cuenta</h1>
+      <p>Únete a nuestra comunidad</p>
+    </div>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label class="form-label" for="username">
+          <span class="material-icons">person</span>
+          Usuario
+        </label>
+        <input 
+          id="username"
+          type="text" 
+          class="form-control" 
+          formControlName="username"
+          placeholder="Elige un nombre de usuario"
+          [class.error]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+        >
+        <span class="error-message" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+          El usuario debe tener al menos 3 caracteres
+        </span>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="email">
+          <span class="material-icons">email</span>
+          Email
+        </label>
+        <input 
+          id="email"
+          type="email" 
+          class="form-control" 
+          formControlName="email"
+          placeholder="tu@email.com"
+          [class.error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+        >
+        <span class="error-message" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+          Ingresa un email válido
+        </span>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="fullName">
+          <span class="material-icons">badge</span>
+          Nombre Completo
+        </label>
+        <input 
+          id="fullName"
+          type="text" 
+          class="form-control" 
+          formControlName="fullName"
+          placeholder="Tu nombre completo"
+          [class.error]="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched"
+        >
+        <span class="error-message" *ngIf="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched">
+          El nombre es requerido
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phoneNumber">
+          <span class="material-icons">phone</span>
+          Teléfono
+        </label>
+        <input 
+          id="phoneNumber"
+          type="tel" 
+          class="form-control" 
+          formControlName="phoneNumber"
+          placeholder="Tu número de teléfono"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="password">
+          <span class="material-icons">lock</span>
+          Contraseña
+        </label>
+        <input 
+          id="password"
+          type="password" 
+          class="form-control" 
+          formControlName="password"
+          placeholder="Mínimo 8 caracteres y un carácter especial"
+          [class.error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        >
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+          <span class="error-message" *ngIf="registerForm.get('password')?.errors?.['required']">
+            La contraseña es requerida
+          </span>
+          <span class="error-message" *ngIf="registerForm.get('password')?.errors?.['minlength']">
+            La contraseña debe tener al menos 8 caracteres
+          </span>
+          <span class="error-message" *ngIf="registerForm.get('password')?.errors?.['pattern']">
+            La contraseña debe contener al menos un carácter especial
+          </span>
+        </div>
+      </div>
+      
+      <div class="alert alert-error" *ngIf="error">
+        <span class="material-icons">error</span>
+        {{ error }}
+      </div>
+      
+      <button 
+        type="submit" 
+        class="btn btn-primary btn-lg btn-block" 
+        [disabled]="loading || registerForm.invalid"
+      >
+        <span *ngIf="!loading">Registrarse</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+    </form>
+    
+    <div class="auth-footer">
+      <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
+    </div>
+  </div>
+</div>

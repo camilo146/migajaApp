@@ -1,0 +1,262 @@
+.navbar {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 4px 20px rgba(0, 155, 58, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 4px solid var(--secondary-color);
+}
+
+.navbar-container {
+  max-width: 1440px; /* Wider container for better spacing */
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px; /* More breathing room */
+}
+
+.navbar-brand {
+  flex-shrink: 0;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 600;
+  gap: 8px;
+  transition: opacity 0.2s;
+  letter-spacing: -0.02em;
+}
+
+.brand-link:hover {
+  opacity: 0.9;
+  transform: none;
+}
+
+.brand-icon {
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+}
+
+.brand-text {
+  display: block;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.hamburger {
+  display: block;
+  width: 25px;
+  height: 2px;
+  background: white;
+  position: relative;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 2px;
+  background: white;
+  left: 0;
+}
+
+.hamburger::before {
+  top: -8px;
+}
+
+.hamburger::after {
+  top: 8px;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.navbar-links a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 8px 20px;
+  border-radius: 50px; /* Pill shape for links */
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.navbar-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: none;
+}
+
+.navbar-links a.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--secondary-color);
+  font-weight: 600;
+}
+
+.admin-link {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.navbar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-login,
+.btn-register,
+.btn-logout {
+  padding: 8px 16px;
+  border-radius: 999px; /* Pill shape */
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-login {
+  background: white;
+  color: var(--primary-color);
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-login:hover {
+  background: var(--secondary-color);
+  color: var(--primary-dark);
+  transform: scale(1.02);
+}
+
+.btn-register {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+}
+
+.btn-register:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.username {
+  color: white;
+  font-weight: 600;
+  padding: 8px 20px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50px; /* Pill shape (circular ends) */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(5px);
+}
+
+.btn-logout {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 50px;
+}
+
+.btn-logout:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: white;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .navbar-menu {
+    position: fixed;
+    top: 70px;
+    left: -100%;
+    width: 100%;
+    background: linear-gradient(135deg, #169826 0%, #58d336 100%);
+    flex-direction: column;
+    padding: 20px;
+    transition: left 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    gap: 15px;
+  }
+
+  .navbar-menu.active {
+    left: 0;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .navbar-links a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .btn-login,
+  .btn-register,
+  .btn-logout {
+    width: 100%;
+    text-align: center;
+  }
+
+  .user-menu {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .username {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .brand-text {
+    display: none;
+  }
+}

@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="header">
+    <h1>Mis Historias</h1>
+    <a routerLink="/stories/new" class="btn btn-primary">Nueva Historia</a>
+  </div>
+
+  <div class="stories-list" *ngIf="!isLoading && stories.length > 0">
+    <div class="story-item" *ngFor="let story of stories">
+      <div class="story-info">
+        <h3>{{story.title}}</h3>
+        <p class="story-excerpt">{{story.content | slice:0:150}}{{story.content.length > 150 ? '...' : ''}}</p>
+        <div class="meta">
+          <span class="status" [ngClass]="story.status.toLowerCase()">
+            {{ story.status === 'DRAFT' ? 'Borrador' : 
+               story.status === 'PUBLISHED' ? 'Publicada' : 
+               story.status === 'MODERATED' ? 'En Revisión' : story.status }}
+          </span>
+          <span>⭐ {{story.averageRating.toFixed(1)}} ({{story.ratingCount}})</span>
+          <span>👁️ {{story.viewCount}}</span>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <a [routerLink]="['/stories', story.id]" class="btn btn-sm btn-outline">Ver</a>
+        <a [routerLink]="['/stories/edit', story.id]" class="btn btn-sm btn-outline">Editar</a>
+        
+        <button *ngIf="story.status === 'DRAFT'" 
+                (click)="submitStory(story.id)" 
+                class="btn btn-sm btn-success">
+          Enviar a Revisión
+        </button>
+        
+        <button (click)="deleteStory(story.id)" class="btn btn-sm btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Cargando tus historias...</p>
+  </div>
+
+  <div class="empty" *ngIf="!isLoading && stories.length === 0">
+    <div class="empty-state">
+      <h2>Aún no has creado ninguna historia</h2>
+      <p>Comparte tu experiencia migajera con la comunidad</p>
+      <a routerLink="/stories/new" class="btn btn-primary">Crear mi primera historia</a>
+    </div>
+  </div>
+</div>
+
+<app-confirmation-modal
+  [isOpen]="isModalOpen"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  (confirm)="onConfirmAction()"
+  (cancel)="closeModal()">
+</app-confirmation-modal>

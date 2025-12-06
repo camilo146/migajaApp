@@ -1,0 +1,124 @@
+<div class="container">
+  <div class="form-container">
+    <div class="form-header">
+      <h1>{{ isEditMode ? 'Editar' : 'Crear' }} Historia</h1>
+      <p>Comparte tu experiencia migajera con la comunidad</p>
+    </div>
+
+    <form [formGroup]="storyForm" (ngSubmit)="onSubmit()">
+      <!-- Título -->
+      <div class="form-group">
+        <label for="title">Título de tu historia *</label>
+        <input
+          type="text"
+          id="title"
+          formControlName="title"
+          placeholder="Ej: La vez que me engañaron con mi mejor amigo"
+          [class.error]="storyForm.get('title')?.invalid && storyForm.get('title')?.touched"
+        />
+        <span class="error-message" *ngIf="storyForm.get('title')?.invalid && storyForm.get('title')?.touched">
+          El título debe tener al menos 5 caracteres
+        </span>
+      </div>
+
+      <!-- Contenido -->
+      <div class="form-group">
+        <label for="content">Cuenta tu historia *</label>
+        <textarea
+          id="content"
+          formControlName="content"
+          rows="10"
+          placeholder="Describe tu experiencia con todos los detalles..."
+          [class.error]="storyForm.get('content')?.invalid && storyForm.get('content')?.touched"
+        ></textarea>
+        <span class="error-message" *ngIf="storyForm.get('content')?.invalid && storyForm.get('content')?.touched">
+          El contenido debe tener al menos 50 caracteres
+        </span>
+      </div>
+
+      <!-- Ubicación -->
+      <div class="form-section">
+        <h3>¿Dónde vives?</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="country">País</label>
+            <input type="text" id="country" formControlName="country" placeholder="Colombia" />
+          </div>
+
+          <div class="form-group">
+            <label for="department">Departamento</label>
+            <input type="text" id="department" formControlName="department" placeholder="Ej: Antioquia" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">Ciudad</label>
+            <input type="text" id="city" formControlName="city" placeholder="Ej: Medellín" />
+          </div>
+
+          <div class="form-group">
+            <label for="municipality">Municipio</label>
+            <input type="text" id="municipality" formControlName="municipality" placeholder="Ej: Envigado" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Duración de la relación -->
+      <div class="form-section">
+        <h3>Duración de la relación</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="relationshipStartDate">Fecha de inicio *</label>
+            <input
+              type="date"
+              id="relationshipStartDate"
+              formControlName="relationshipStartDate"
+              (change)="calculateDuration()"
+              [class.error]="storyForm.get('relationshipStartDate')?.invalid && storyForm.get('relationshipStartDate')?.touched"
+            />
+            <span class="error-message" *ngIf="storyForm.get('relationshipStartDate')?.invalid && storyForm.get('relationshipStartDate')?.touched">
+              La fecha de inicio es requerida
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="relationshipEndDate">Fecha de fin</label>
+            <input
+              type="date"
+              id="relationshipEndDate"
+              formControlName="relationshipEndDate"
+              (change)="calculateDuration()"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="relationshipDurationDays">Duración (días)</label>
+            <input
+              type="number"
+              id="relationshipDurationDays"
+              formControlName="relationshipDurationDays"
+              placeholder="Auto-calculado"
+              readonly
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensajes de error -->
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="router.navigate(['/my-stories'])">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Guardando...' : (isEditMode ? 'Actualizar' : 'Crear Borrador') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

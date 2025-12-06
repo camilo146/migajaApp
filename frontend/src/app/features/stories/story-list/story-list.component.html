@@ -1,0 +1,146 @@
+<div class="page-header">
+  <div class="header-content">
+    <div>
+      <h1>Historias Migajeras</h1>
+      <p>Descubre, comparte las mejores arrastradas de la ciudad bonita </p>
+    </div>
+    <a routerLink="/stories/new" class="btn btn-primary btn-lg">
+      <span></span> Compartir mi Historia
+    </a>
+  </div>
+  
+  <div class="search-container">
+    <input 
+      type="text" 
+      placeholder="Buscar por título o autor..." 
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearch($event)"
+      class="search-input"
+    >
+  </div>
+</div>
+
+<div class="container">
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Cargando historias...</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && stories.length === 0">
+    <div class="empty-icon">📭</div>
+    <h3>No hay historias aún</h3>
+    <p>Sé el primero en compartir tu experiencia.</p>
+    <a routerLink="/stories/new" class="btn btn-primary">Crear Historia</a>
+  </div>
+
+  <div class="stories-grid" *ngIf="!isLoading && stories.length > 0">
+    <article class="story-card" *ngFor="let story of stories">
+      <div class="card-header">
+        <div class="author-profile">
+          <!-- Avatar removed as requested -->
+          <div class="author-details">
+            <span class="author-name">{{story.author.fullName}}</span>
+            <span class="location" *ngIf="story.city">📍 {{story.city}}</span>
+          </div>
+        </div>
+        <span class="date">{{story.createdAt | date:'MMM d, y'}}</span>
+      </div>
+
+      <div class="card-body">
+        <h2 class="story-title">
+          <a [routerLink]="['/stories', story.id]">{{story.title}}</a>
+          <span *ngIf="story.verified || registeredStoryStatus.get(story.id) === 'APPROVED'" class="verified-badge" title="Historia Verificada">
+            <i class="fas fa-check-circle"></i> Verificada
+          </span>
+        </h2>
+        <p class="story-excerpt">{{story.content | slice:0:150}}...</p>
+        
+        <div class="tags" *ngIf="story.relationshipDurationDays">
+          <span class="tag">⏱️ {{story.relationshipDurationDays}} días</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="stats">
+          <div class="rating" title="Calificación promedio">
+            <span class="star">⭐</span>
+            <span class="value">{{story.averageRating | number:'1.1-1'}}</span>
+            <span class="count">({{story.ratingCount}})</span>
+          </div>
+          <div class="views" title="Vistas">
+            <span>👁️</span> {{story.viewCount}}
+          </div>
+        </div>
+        <a [routerLink]="['/stories', story.id]" class="read-more">
+          Leer más <span>→</span>
+        </a>
+        <button 
+          *ngIf="currentUser && story.author.id === currentUser.id && activeTournaments.length > 0 && !story.verified && !registeredStoryStatus.has(story.id)" 
+          class="btn btn-sm btn-outline-primary" 
+          (click)="openRegistrationModal(story.id)"
+          title="Inscribir en torneo activo">
+          🏆 Inscribir
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <div class="pagination-container" *ngIf="totalPages > 1">
+    <button class="btn btn-secondary" (click)="previousPage()" [disabled]="currentPage === 0">
+      ← Anterior
+    </button>
+    <span class="page-info">Página {{currentPage + 1}} de {{totalPages}}</span>
+    <button class="btn btn-secondary" (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">
+      Siguiente →
+    </button>
+  </div>
+</div>
+
+<!-- Registration Modal -->
+<div class="modal-overlay" *ngIf="showRegistrationModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Inscripción al Torneo</h2>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="payment-info">
+        <p>Para completar tu inscripción al torneo <strong>{{selectedTournament?.title}}</strong>, realiza el pago de la inscripción.</p>
+        
+        <div class="nequi-details">
+          <div class="nequi-logo">
+            <span>Nequi</span>
+          </div>
+          <div class="nequi-number">
+            <span class="label">Número:</span>
+            <span class="value">{{nequiNumber}}</span>
+          </div>
+          <div class="amount">
+            <span class="label">Valor:</span>
+            <span class="value">${{selectedTournament?.entryFee | number}}</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="transactionId">Código de Transacción / Comprobante</label>
+          <input 
+            type="text" 
+            id="transactionId" 
+            [(ngModel)]="transactionId" 
+            placeholder="Ingresa el código de la transacción"
+            class="form-control">
+          <small class="hint">Ingresa el código que aparece en tu comprobante de Nequi</small>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeModal()">Cancelar</button>
+      <button 
+        class="btn-primary" 
+        [disabled]="!transactionId || isSubmitting"
+        (click)="confirmRegistration()">
+        {{ isSubmitting ? 'Enviando...' : 'Confirmar Inscripción' }}
+      </button>
+    </div>
+  </div>
+</div>

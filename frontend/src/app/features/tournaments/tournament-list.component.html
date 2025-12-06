@@ -1,0 +1,160 @@
+<div class="tournament-container">
+  <div class="header">
+    <h1>🏆 Torneos de Historias</h1>
+    <p class="subtitle">Compite con tus mejores historias y gana increíbles premios</p>
+  </div>
+  
+  <!-- Mis Participaciones -->
+  <div class="my-entries-section" *ngIf="myEntries.length > 0">
+    <h2>Mis Participaciones</h2>
+    <div class="entries-grid">
+      <div class="entry-card" *ngFor="let entry of myEntries">
+        <h3>{{ entry.storyTitle }}</h3>
+        <div class="entry-stats">
+          <span class="stat">
+            <strong>Votos:</strong> {{ entry.voteCount }}
+          </span>
+          <span class="stat">
+            <strong>Rating:</strong> {{ entry.averageRating | number:'1.1-1' }} ⭐
+          </span>
+          <span class="badge" [ngClass]="getStatusBadgeClass(entry.status)">
+            {{ entry.status }}
+          </span>
+          <span class="badge category-badge" [ngClass]="entry.category.toLowerCase()" *ngIf="entry.category">
+            {{ entry.category }}
+          </span>
+        </div>
+        <p class="entry-date">Registrado: {{ entry.registeredAt | date:'short' }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Lista de Torneos -->
+  <div class="tournaments-section">
+    <h2>Torneos Disponibles</h2>
+    <div class="tournaments-grid">
+      <div class="tournament-card" *ngFor="let tournament of tournaments">
+        <div class="tournament-header">
+          <h3>{{ tournament.title }}</h3>
+          <span class="badge" [ngClass]="getStatusBadgeClass(tournament.status)">
+            {{ getStatusText(tournament.status) }}
+          </span>
+        </div>
+        
+        <p class="tournament-description">{{ tournament.description }}</p>
+        
+        <div class="tournament-details">
+          <div class="detail-row" *ngIf="!(tournament.status === 'ENDED' && tournament.winner)">
+            <span class="label">💰 Premio:</span>
+            <span class="value prize">${{ tournament.prizeAmount.toLocaleString() }}</span>
+          </div>
+          <div class="detail-row winner-row" *ngIf="tournament.status === 'ENDED' && tournament.winner">
+            <span class="label">🏆 Ganador:</span>
+            <div class="winner-info-inline">
+              <span class="winner-name">{{ tournament.winner.storyTitle }}</span>
+              <span class="badge category-badge" [ngClass]="tournament.winner.category?.toLowerCase()">
+                {{ tournament.winner.category }}
+              </span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <span class="label">💳 Inscripción:</span>
+            <span class="value">${{ tournament.entryFee.toLocaleString() }}</span>
+          </div>
+          <div class="detail-row" *ngIf="tournament.entryCount">
+            <span class="label">👥 Participantes:</span>
+            <span class="value">{{ tournament.entryCount }}</span>
+          </div>
+        </div>
+        
+        <div class="tournament-actions">
+          <button 
+            class="btn-primary" 
+            *ngIf="canRegister(tournament)"
+            (click)="openRegistrationModal(tournament)">
+            Inscribirse Ahora
+          </button>
+          <a 
+            routerLink="/stories/new" 
+            class="btn-secondary"
+            *ngIf="tournament.status === 'REGISTRATION_OPEN'">
+            ✍️ Escribir Historia
+          </a>
+          <button 
+            class="btn-secondary" 
+            *ngIf="canVote(tournament)"
+            (click)="viewRankings(tournament.id)">
+            Ver Rankings y Votar
+          </button>
+          <button 
+            class="btn-secondary" 
+            *ngIf="tournament.status === 'ENDED'"
+            (click)="viewRankings(tournament.id)">
+            Ver Resultados
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <p class="no-tournaments" *ngIf="tournaments.length === 0">
+      No hay torneos disponibles en este momento. ¡Vuelve pronto!
+    </p>
+  </div>
+</div>
+
+<!-- Modal de Registro -->
+<div class="modal-overlay" *ngIf="showRegistrationModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Inscripción al Torneo</h2>
+    <p class="modal-subtitle">{{ selectedTournament?.title }}</p>
+    
+    <div class="registration-info">
+      <p><strong>Premio:</strong> ${{ selectedTournament?.prizeAmount?.toLocaleString() }}</p>
+      <p><strong>Costo de Inscripción:</strong> ${{ selectedTournament?.entryFee?.toLocaleString() }}</p>
+    </div>
+    
+    <div class="form-group">
+      <label for="storySelect">Selecciona tu historia:</label>
+      <select 
+        id="storySelect" 
+        [(ngModel)]="selectedStoryId" 
+        class="form-control">
+        <option [value]="0">-- Selecciona una historia --</option>
+        <option *ngFor="let story of myStories" [value]="story.id">
+          {{ story.title }}
+        </option>
+      </select>
+    </div>
+    
+    <p class="warning-message" *ngIf="myStories.length === 0">
+      No tienes historias publicadas. 
+      <a routerLink="/create-story">Crea una historia</a> primero.
+    </p>
+    
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
+      <button 
+        class="btn-confirm" 
+        [disabled]="!selectedStoryId || selectedStoryId === 0 || myStories.length === 0"
+        (click)="proceedToPayment()">
+        Continuar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Info Modal -->
+<div class="modal-overlay" *ngIf="showPaymentModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Información de Pago</h2>
+    <p>Por el momento no contamos con pasarela de pagos pero puedes enviar el dinero de la inscripción a este número de Nequi:</p>
+    <div class="nequi-info" style="font-size: 1.5em; text-align: center; margin: 20px 0; color: #673ab7;">
+      <strong>3132233304</strong>
+    </div>
+    <p>Agradecemos tu confianza.</p>
+    
+    <div class="modal-actions">
+      <button class="btn-confirm" (click)="confirmPayment()">OK</button>
+    </div>
+  </div>
+</div>

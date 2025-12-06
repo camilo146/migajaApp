@@ -1,0 +1,157 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content fade-in">
+        <h1 class="hero-title">
+          Haz publica tu Arrastrada o la de alguien mas. <span class="gradient-text"> no compartas datos privados  </span>
+        </h1>
+        <p class="hero-subtitle">
+          Descubre historias reales de engaños y migajeadas, comparte la tuya y evita que otros pasen lo mismo.
+        </p>
+        <div class="hero-actions">
+          <a routerLink="/stories" class="btn btn-primary btn-lg">
+            <span class="material-icons">explore</span>
+            Explorar Historias
+          </a>
+          <a *ngIf="!isAuthenticated" routerLink="/register" class="btn btn-outline btn-lg">
+            <span class="material-icons">person_add</span>
+            Únete Ahora
+          </a>
+          <a *ngIf="isAuthenticated" routerLink="/create-story" class="btn btn-secondary btn-lg">
+            <span class="material-icons">edit</span>
+            Crear Historia
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tournament Section -->
+  <section class="tournament-section" *ngIf="activeTournament">
+    <div class="container">
+      <div class="tournament-card fade-in">
+        <div class="tournament-header">
+          <span class="badge badge-primary">{{ activeTournament.status }}</span>
+          <h2>{{ activeTournament.title }}</h2>
+        </div>
+        
+        <div class="tournament-prize">
+          <span class="label">Premio Actual</span>
+          <div class="amount">{{ activeTournament.prizeAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
+          <p class="hint">¡El premio aumenta con cada inscripción!</p>
+        </div>
+
+        <div class="tournament-winner" *ngIf="activeTournament.status === 'ENDED' && activeTournament.winner">
+          <h3>🏆 Ganador del Torneo 🏆</h3>
+          <div class="winner-info">
+            <span class="winner-title">{{ activeTournament.winner.storyTitle }}</span>
+            <div class="winner-stats">
+              <span>Puntaje: {{ activeTournament.winner.score }}</span>
+              <span class="category-badge">{{ activeTournament.winner.category }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tournament-actions" *ngIf="activeTournament.status === 'REGISTRATION_OPEN'">
+          <a routerLink="/tournaments" class="btn btn-primary">
+            Participar Ahora ($10.000)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title text-center">¿Por qué MigajerosBucaramanga?</h2>
+      <div class="features-grid">
+        <div class="feature-card card">
+          <div class="feature-icon">
+            <span class="material-icons">auto_stories</span>
+          </div>
+          <h3>Comparte tu Historia</h3>
+          <p>Escribe y comparte tus experiencias de relación o algo adicional</p>
+        </div>
+        
+        <div class="feature-card card">
+          <div class="feature-icon">
+            <span class="material-icons">star</span>
+          </div>
+          <h3>Califica y Comenta</h3>
+          <p>Lee historias de otros, califica con estrellas y deja tus comentarios</p>
+        </div>
+        
+        <div class="feature-card card">
+          <div class="feature-icon">
+            <span class="material-icons">emoji_events</span>
+          </div>
+          <h3>Participa en Torneos</h3>
+          <p>Compite en torneos, gana premios y destaca tu historia</p>
+        </div>
+        
+        <div class="feature-card card">
+          <div class="feature-icon">
+            <span class="material-icons">security</span>
+          </div>
+          <h3>Ambiente Seguro</h3>
+          <p>Moderación activa y protección de contenido sensible</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Stories -->
+  <section class="featured-stories" *ngIf="featuredStories.length > 0">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Historias Destacadas</h2>
+        <a routerLink="/stories" class="btn btn-outline">Ver Todas</a>
+      </div>
+      
+      <div class="stories-grid">
+        <div *ngFor="let story of featuredStories" class="story-card card">
+          <div class="story-image" *ngIf="story.photos && story.photos.length > 0">
+            <img [src]="story.photos[0].url" [alt]="story.title">
+          </div>
+          <div class="story-content">
+            <h3 class="story-title">{{ story.title }}</h3>
+            <p class="story-author">Por {{ story.author.fullName }}</p>
+            <p class="story-excerpt">{{ story.content.substring(0, 150) }}...</p>
+            <div class="story-stats">
+              <span class="stat">
+                <span class="material-icons">star</span>
+                {{ story.averageRating.toFixed(1) }}
+              </span>
+              <span class="stat">
+                <span class="material-icons">visibility</span>
+                {{ story.viewCount }}
+              </span>
+            </div>
+            <a [routerLink]="['/stories', story.id]" class="btn btn-primary btn-sm">
+              Leer Historia
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>¿Tienes una historia que contar?</h2>
+        <p>Únete a nuestra comunidad y comparte tu experiencia</p>
+        <a *ngIf="!isAuthenticated" routerLink="/register" class="btn btn-primary btn-lg">
+          Comenzar Ahora
+        </a>
+        <a *ngIf="isAuthenticated" routerLink="/create-story" class="btn btn-primary btn-lg">
+          <span class="material-icons">create</span>
+          Escribir mi Historia
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

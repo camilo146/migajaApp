@@ -1,0 +1,274 @@
+<div class="admin-dashboard">
+  <h1>Panel de Administración</h1>
+  
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      [class.active]="activeTab === 'stats'" 
+      (click)="setActiveTab('stats')">
+      Estadísticas
+    </button>
+    <button 
+      [class.active]="activeTab === 'stories'" 
+      (click)="setActiveTab('stories')">
+      Moderación de Historias
+    </button>
+    <button 
+      [class.active]="activeTab === 'users'" 
+      (click)="setActiveTab('users')">
+      Gestión de Usuarios
+    </button>
+    <button 
+      [class.active]="activeTab === 'tournaments'" 
+      (click)="setActiveTab('tournaments')">
+      Torneos
+    </button>
+  </div>
+  
+  <!-- Estadísticas -->
+  <div class="tab-content" *ngIf="activeTab === 'stats'">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Usuarios</h3>
+        <p class="stat-number">{{ stats.totalUsers }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Historias</h3>
+        <p class="stat-number">{{ stats.totalStories }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Historias Publicadas</h3>
+        <p class="stat-number">{{ stats.totalPublishedStories }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Comentarios</h3>
+        <p class="stat-number">{{ stats.totalComments }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Calificaciones</h3>
+        <p class="stat-number">{{ stats.totalRatings }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Rating Promedio</h3>
+        <p class="stat-number">{{ stats.averageRating | number:'1.1-1' }} ⭐</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Moderación de Historias -->
+  <div class="tab-content" *ngIf="activeTab === 'stories'">
+    <h2>Historias Pendientes de Aprobación</h2>
+    <div class="table-container" *ngIf="pendingStories.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let story of pendingStories">
+            <td>{{ story.id }}</td>
+            <td>{{ story.title }}</td>
+            <td>{{ story.author?.username || 'Desconocido' }}</td>
+            <td><span class="badge">{{ story.status }}</span></td>
+            <td>{{ story.createdAt | date:'short' }}</td>
+            <td>
+              <button class="btn-approve" (click)="approveStory(story.id)">Aprobar</button>
+              <button class="btn-delete" (click)="deleteStory(story.id)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="pendingStories.length === 0">No hay historias pendientes</p>
+    
+    <h2 style="margin-top: 30px;">Todas las Historias</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Estado</th>
+            <th>Vistas</th>
+            <th>Rating</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let story of allStories">
+            <td>{{ story.id }}</td>
+            <td>{{ story.title }}</td>
+            <td>{{ story.author?.username || 'Desconocido' }}</td>
+            <td><span class="badge">{{ story.status }}</span></td>
+            <td>{{ story.viewCount }}</td>
+            <td>{{ story.averageRating | number:'1.1-1' }} ({{ story.ratingCount }})</td>
+            <td>
+              <button class="btn-delete" (click)="deleteStory(story.id)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Gestión de Usuarios -->
+  <div class="tab-content" *ngIf="activeTab === 'users'">
+    <h2>Gestión de Usuarios</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Nombre Completo</th>
+            <th>Teléfono</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Fecha Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.fullName }}</td>
+            <td>{{ user.phoneNumber || 'N/A' }}</td>
+            <td><span class="badge-role">{{ user.role }}</span></td>
+            <td>
+              <span [class.active-user]="user.active" [class.inactive-user]="!user.active">
+                {{ user.active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td>{{ user.createdAt | date:'short' }}</td>
+            <td>
+              <button class="btn-toggle" (click)="toggleUserStatus(user.id, user.active)">
+                {{ user.active ? 'Desactivar' : 'Activar' }}
+              </button>
+              <button class="btn-role" (click)="changeUserRole(user.id, user.role)">
+                Cambiar Rol
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Torneos -->
+  <div class="tab-content" *ngIf="activeTab === 'tournaments'">
+    
+    <div class="pending-entries-section" *ngIf="pendingEntries.length > 0">
+      <h3>Inscripciones Pendientes de Verificación</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Historia</th>
+              <th>Fecha Registro</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of pendingEntries">
+              <td>{{ entry.id }}</td>
+              <td>{{ entry.storyTitle }}</td>
+              <td>{{ entry.registeredAt | date:'short' }}</td>
+              <td><span class="badge-warning">{{ entry.status }}</span></td>
+              <td>
+                <button class="btn-approve" (click)="verifyEntry(entry.id)">Verificar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tournaments-list">
+      <h3>Torneos Activos</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Estado</th>
+              <th>Inscritos</th>
+              <th>Premio Actual</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tournament of tournaments">
+              <td>{{ tournament.title }}</td>
+              <td><span class="status-badge" [class]="tournament.status">{{ tournament.status }}</span></td>
+              <td>{{ tournament.entryCount }}</td>
+              <td>{{ tournament.prizeAmount | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+              <td>
+                <div class="actions-wrapper">
+                  <button class="btn-action" (click)="viewLeaderboard(tournament.id)">Ver Tabla</button>
+                  
+                  <button class="btn-approve" *ngIf="tournament.status === 'UPCOMING' || tournament.status === 'ENDED'" (click)="openRegistration(tournament.id)">Abrir Inscripciones</button>
+                  <button class="btn-action" *ngIf="tournament.status === 'REGISTRATION_OPEN'" (click)="startVoting(tournament.id)">Iniciar Votación</button>
+                  <button class="btn-danger" *ngIf="tournament.status === 'VOTING'" (click)="endTournament(tournament.id)">Finalizar Torneo</button>
+
+                  <button class="btn-action" (click)="calculateScores(tournament.id)">Calcular Puntajes</button>
+                  <button class="btn-action btn-danger" *ngIf="tournament.status !== 'ENDED'" (click)="publishWinner(tournament.id)">Publicar Ganador</button>
+                  <button class="btn-action btn-warning" (click)="resetTournament(tournament.id)">Reiniciar Torneo</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="leaderboard-section" *ngIf="selectedTournamentId && leaderboard.length > 0">
+      <h3>Tabla de Posiciones</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Posición</th>
+              <th>Historia</th>
+              <th>Categoría</th>
+              <th>Puntaje</th>
+              <th>Votos</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of leaderboard; let i = index">
+              <td>#{{ i + 1 }}</td>
+              <td>{{ entry.storyTitle }}</td>
+              <td>
+                <span class="category-badge" [class]="entry.category">{{ entry.category }}</span>
+              </td>
+              <td>{{ entry.score | number:'1.0-0' }}</td>
+              <td>{{ entry.voteCount }}</td>
+              <td>{{ entry.averageRating | number:'1.1-1' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirmation-modal
+  [isOpen]="isModalOpen"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  (confirm)="onConfirmAction()"
+  (cancel)="closeModal()">
+</app-confirmation-modal>

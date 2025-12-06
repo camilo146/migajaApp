@@ -1,0 +1,116 @@
+<div class="story-container" *ngIf="story">
+  <div class="story-layout">
+    <!-- Main Content -->
+    <main class="story-main">
+      <header class="story-header">
+        <div class="meta-top">
+          <a routerLink="/stories" class="back-link">← Volver a historias</a>
+          <span class="date">{{story.createdAt | date:'longDate'}}</span>
+        </div>
+        
+        <h1 class="title">{{story.title}}</h1>
+        
+        <div class="author-card">
+          <div class="info">
+            <h3>{{story.author.fullName}}</h3>
+            <p class="location" *ngIf="story.city">
+              📍 {{story.city}}{{story.department ? ', ' + story.department : ''}}
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <div class="story-body">
+        <p>{{story.content}}</p>
+      </div>
+
+      <div class="story-footer">
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="label">Duración de la relación</span>
+            <span class="value">⏱️ {{story.relationshipDurationDays}} días</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">Vistas</span>
+            <span class="value">👁️ {{story.viewCount}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <section class="comments-section">
+        <h3>Comentarios <span class="count">({{comments.length}})</span></h3>
+        
+        <div class="comment-form-wrapper">
+          <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+            <div class="input-group">
+              <textarea 
+                formControlName="content" 
+                placeholder="Comparte tu opinión o consejo..."
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="!commentForm.valid">
+                Publicar Comentario
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="comments-list">
+          <div class="comment-item" *ngFor="let comment of comments">
+            <div class="comment-body">
+              <div class="comment-header">
+                <span class="username">{{comment.user.fullName}}</span>
+                <span class="time">{{comment.createdAt | date:'mediumDate'}}</span>
+              </div>
+              <p class="text">{{comment.content}}</p>
+            </div>
+          </div>
+          
+          <div class="no-comments" *ngIf="comments.length === 0">
+            <p>Aún no hay comentarios. ¡Sé el primero en opinar!</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="story-sidebar">
+      <div class="rating-card">
+        <h3>Calificación</h3>
+        <div class="current-rating">
+          <span class="big-score">{{story.averageRating | number:'1.1-1'}}</span>
+          <div class="stars-display">
+            <span class="star" *ngFor="let filled of getStarArray(story.averageRating)">
+              {{filled ? '⭐' : '☆'}}
+            </span>
+          </div>
+          <span class="total-votes">{{story.ratingCount}} votos</span>
+        </div>
+
+        <div class="rate-action">
+          <p>¿Qué te pareció esta historia?</p>
+          <form [formGroup]="ratingForm" (ngSubmit)="submitRating()">
+            <div class="interactive-stars">
+              <span *ngFor="let i of [1,2,3,4,5]" 
+                    class="star-btn" 
+                    [class.active]="(ratingForm.get('stars')?.value || 0) >= i"
+                    (click)="setRating(i)">
+                ★
+              </span>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-full" [disabled]="!ratingForm.valid">
+              Enviar Voto
+            </button>
+          </form>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <div class="spinner"></div>
+</div>
