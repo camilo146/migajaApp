@@ -34,7 +34,7 @@ services:
     build: ./frontend
     container_name: migaja-frontend
     ports:
-      - "80:80"
+      - "4200:80"
     depends_on:
       - backend
     networks:

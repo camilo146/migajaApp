@@ -46,14 +46,14 @@ Tienes dos opciones. La más fácil si no usas Git es copiar los archivos desde 
 2.  Ejecuta este comando para copiar todo al servidor (reemplaza la IP):
 
 ```powershell
-scp -r backend frontend docker-compose.yml root@TU_DIRECCION_IP:/root/migajaApp
+scp -r backend frontend docker-compose.yml root@104.131.112.150:/root/migajaApp
 ```
 
 **Opción B: Usar Git (Si ya subiste el código a GitHub)**
 
 En el servidor ejecuta:
 ```bash
-git clone https://github.com/TU_USUARIO/migajaApp.git
+git clone https://github.com/camilo146/migajaApp.git
 cd migajaApp
 ```
 
