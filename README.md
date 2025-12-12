@@ -204,14 +204,6 @@ Este es un proyecto privado. Para contribuir:
 
 Proyecto privado - Todos los derechos reservados
 
-## 👥 Autor
 
-Desarrollado con ❤️ para la comunidad de migajeros
-
-## 📞 Soporte
-
-Para preguntas o problemas, contactar al equipo de desarrollo.
-
----
 
 **¡Comparte tu historia y conecta con otros! 💕**
